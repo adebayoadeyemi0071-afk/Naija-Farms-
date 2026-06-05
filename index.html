@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Naija Roots Farm</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:auto;}
+    body{font-family:'Raleway',sans-serif;cursor:none;overflow-x:hidden;background:#0A0A1A;}
+
+    /* ── Cursor ── */
+    #cur{width:10px;height:10px;background:#FFD700;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;}
+    #cur-ring{width:34px;height:34px;border:1.5px solid rgba(255,215,0,0.55);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);}
+    body:hover #cur{opacity:1;}
+
+    /* ── Fixed background ── */
+    #bg{position:fixed;inset:0;z-index:0;overflow:hidden;}
+    #sky{position:absolute;inset:0;background:linear-gradient(to bottom,#D4501A 0%,#F4923A 30%,#FFD194 65%,#8B3A1A 100%);}
+    #moon{position:absolute;width:50px;height:50px;border-radius:50%;background:radial-gradient(circle,#FFFDE7 30%,#FFF9C4 70%,#FFF176 100%);box-shadow:0 0 40px 15px rgba(255,255,180,0.3);opacity:0;top:12%;right:18%;pointer-events:none;}
+    #sun{position:absolute;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,#FFFFFF 10%,#FFF9C4 40%,#FFD700 65%,#FF8C00 100%);box-shadow:0 0 60px 20px rgba(255,200,0,0.45),0 0 120px 60px rgba(255,150,0,0.18);pointer-events:none;transform:translate(-50%,-50%);}
+    #stars-wrap{position:absolute;inset:0;pointer-events:none;}
+    .star{position:absolute;border-radius:50%;background:white;opacity:0;}
+    #clouds-wrap{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+    .cld{position:absolute;border-radius:999px;filter:blur(3px);}
+    #landscape{position:absolute;bottom:0;left:0;width:100%;height:72%;pointer-events:none;}
+    #ptcls{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+    .ptcl{position:absolute;border-radius:50%;pointer-events:none;}
+
+    /* ── Scroll wrap ── */
+    #scroll-wrap{position:relative;z-index:10;}
+
+    /* ── Sections ── */
+    .sec{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
+
+    /* ── Hero ── */
+    #s-hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
+    .hero-eyebrow{font-size:.7rem;letter-spacing:.45em;text-transform:uppercase;color:rgba(255,255,255,.65);margin-bottom:1.5rem;font-weight:400;}
+    .hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(4rem,12vw,9.5rem);font-weight:300;color:#FFFDE7;line-height:.9;text-shadow:0 4px 40px rgba(0,0,0,.35);}
+    .hero-title em{font-style:italic;color:#FFD700;}
+    .hero-sub{margin-top:1.8rem;font-size:1rem;color:rgba(255,255,255,.72);font-weight:300;letter-spacing:.08em;line-height:1.9;max-width:440px;}
+    .scroll-hint{margin-top:3rem;display:flex;flex-direction:column;align-items:center;gap:.6rem;color:rgba(255,255,255,.4);font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;}
+    .sh-line{width:1px;height:54px;background:linear-gradient(to bottom,rgba(255,255,255,.45),transparent);animation:shLine 2.2s ease-in-out infinite;}
+    @keyframes shLine{0%,100%{transform:scaleY(1);opacity:.5}50%{transform:scaleY(1.3);opacity:1}}
+
+    /* ── Content cards ── */
+    .card{background:rgba(10,5,0,.55);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border:1px solid rgba(255,215,0,.12);padding:3rem;max-width:780px;width:100%;}
+    .card-wide{max-width:960px;}
+    .sec-label{font-size:.65rem;letter-spacing:.42em;text-transform:uppercase;color:#FFD700;margin-bottom:1.4rem;font-weight:500;}
+    .sec-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,5vw,4rem);color:#FFFDE7;font-weight:400;line-height:1.05;margin-bottom:1.4rem;}
+    .sec-title em{font-style:italic;color:#FFB347;}
+    .sec-body{font-size:.93rem;color:rgba(255,255,255,.68);line-height:1.95;font-weight:300;}
+    .divider{width:40px;height:1px;background:rgba(255,215,0,.35);margin:1.6rem auto;}
+
+    /* ── Products grid ── */
+    .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1rem;margin-top:2rem;text-align:left;}
+    .prod-item{padding:1.2rem 1rem;border:1px solid rgba(255,215,0,.1);background:rgba(255,255,255,.04);transition:border-color .3s,background .3s;}
+    .prod-item:hover{border-color:rgba(255,215,0,.35);background:rgba(255,215,0,.06);}
+    .prod-icon{font-size:1.6rem;margin-bottom:.55rem;}
+    .prod-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#FFFDE7;font-weight:600;margin-bottom:.2rem;}
+    .prod-desc{font-size:.72rem;color:rgba(255,255,255,.45);font-weight:300;line-height:1.5;}
+
+    /* ── Stats ── */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2.2rem;}
+    .stat-item{text-align:center;padding:1rem;border-left:1px solid rgba(255,215,0,.15);}
+    .stat-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;color:#FFD700;font-weight:300;line-height:1;}
+    .stat-label{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-top:.35rem;}
+
+    /* ── Contact ── */
+    .contact-card{text-align:center;}
+    .contact-btn{display:inline-block;margin-top:2rem;padding:1.1rem 3.5rem;border:1.5px solid #FFD700;color:#FFD700;font-family:'Raleway',sans-serif;font-size:.8rem;letter-spacing:.28em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .4s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;background:transparent;}
+    .contact-btn::before{content:'';position:absolute;inset:0;background:#FFD700;transform:translateX(-101%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+    .contact-btn:hover::before{transform:translateX(0);}
+    .contact-btn:hover{color:#1A0800;}
+    .contact-btn span{position:relative;z-index:1;}
+    .locations{margin-top:1.6rem;font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:.1em;}
+
+    /* ── Footer ── */
+    #footer{text-align:center;padding:4rem 2rem;border-top:1px solid rgba(255,215,0,.08);}
+    .footer-logo{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:rgba(255,255,255,.2);letter-spacing:.25em;}
+    .footer-copy{font-size:.7rem;color:rgba(255,255,255,.18);letter-spacing:.15em;margin-top:.8rem;}
+
+    /* ── Responsive ── */
+    @media(max-width:768px){
+      .card{padding:2rem 1.5rem;}
+      .prod-grid{grid-template-columns:1fr 1fr;}
+      .stats-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cur"></div>
+  <div id="cur-ring"></div>
+
+  <!-- ════════════ FIXED BACKGROUND ════════════ -->
+  <div id="bg">
+    <div id="sky"></div>
+    <div id="moon"></div>
+    <div id="sun"></div>
+    <div id="stars-wrap"></div>
+    <div id="clouds-wrap"></div>
+
+    <!-- LANDSCAPE SVG -->
+    <svg id="landscape" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Far hills -->
+      <path id="fh" d="M0,310 C180,220 380,265 580,245 C780,225 980,270 1180,248 C1340,232 1440,255 1440,255 L1440,520 L0,520 Z" fill="#1A3D0A" opacity=".55"/>
+
+      <!-- Mid green hills -->
+      <path id="mh" d="M0,365 C140,295 310,330 520,310 C730,290 940,320 1130,302 C1310,286 1440,315 1440,315 L1440,520 L0,520 Z" fill="#2A5A14" opacity=".75"/>
+
+      <!-- === PALM TREE — left 1 === -->
+      <g id="pl1" transform="translate(75,355)">
+        <line x1="0" y1="0" x2="-12" y2="-125" stroke="#3D2B1F" stroke-width="9" stroke-linecap="round"/>
+        <ellipse cx="-28" cy="-120" rx="38" ry="11" fill="#2D7A1B" transform="rotate(-30,-28,-120)"/>
+        <ellipse cx="-5"  cy="-130" rx="42" ry="10" fill="#38941F" transform="rotate(8,-5,-130)"/>
+        <ellipse cx="18"  cy="-122" rx="40" ry="10" fill="#2D7A1B" transform="rotate(44,18,-122)"/>
+        <ellipse cx="-18" cy="-135" rx="37" ry="9"  fill="#4AAE2A" transform="rotate(-12,-18,-135)"/>
+        <ellipse cx="-38" cy="-124" rx="33" ry="8"  fill="#2D7A1B" transform="rotate(-52,-38,-124)"/>
+      </g>
+      <!-- palm left 2 -->
+      <g id="pl2" transform="translate(160,375)">
+        <line x1="0" y1="0" x2="7" y2="-95" stroke="#3D2B1F" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="18" cy="-90" rx="30" ry="8"  fill="#38941F" transform="rotate(20,18,-90)"/>
+        <ellipse cx="4"  cy="-100" rx="32" ry="9" fill="#2D7A1B" transform="rotate(-14,4,-100)"/>
+        <ellipse cx="22" cy="-95" rx="28" ry="7"  fill="#4AAE2A" transform="rotate(48,22,-95)"/>
+        <ellipse cx="-4" cy="-97" rx="26" ry="7"  fill="#2D7A1B" transform="rotate(-42,-4,-97)"/>
+      </g>
+
+      <!-- === BANANA/PLANTAIN mid-left === -->
+      <g id="bp1" transform="translate(390,372)">
+        <rect x="-6" y="-85" width="12" height="85" fill="#4A7C2F" rx="3"/>
+        <ellipse cx="0"  cy="-85" rx="42" ry="14" fill="#5A9A3A" transform="rotate(-22,0,-85)"/>
+        <ellipse cx="6"  cy="-74" rx="40" ry="13" fill="#4A7C2F" transform="rotate(14,6,-74)"/>
+        <ellipse cx="-10" cy="-90" rx="36" ry="12" fill="#6ABD42" transform="rotate(-38,-10,-90)"/>
+      </g>
+      <g id="bp2" transform="translate(455,383)">
+        <rect x="-4" y="-65" width="8" height="65" fill="#4A7C2F" rx="3"/>
+        <ellipse cx="0"  cy="-65" rx="32" ry="11" fill="#6ABD42" transform="rotate(-18,0,-65)"/>
+        <ellipse cx="5"  cy="-58" rx="29" ry="10" fill="#4A7C2F" transform="rotate(19,5,-58)"/>
+      </g>
+
+      <!-- === BAOBAB-STYLE TREE center === -->
+      <g id="bao" transform="translate(720,350)">
+        <rect x="-14" y="-110" width="28" height="110" fill="#5C3A20" rx="4"/>
+        <!-- trunk taper -->
+        <polygon points="-14,0 -20,-60 20,-60 14,0" fill="#4A2E18"/>
+        <!-- canopy blob -->
+        <ellipse cx="0" cy="-120" rx="60" ry="35" fill="#3A7A22"/>
+        <ellipse cx="-35" cy="-110" rx="35" ry="22" fill="#2D6B18"/>
+        <ellipse cx="35" cy="-110" rx="38" ry="24" fill="#3A7A22"/>
+        <ellipse cx="0" cy="-140" rx="45" ry="28" fill="#4A9A2C"/>
+      </g>
+
+      <!-- === PALM TREE — right === -->
+      <g id="pr1" transform="translate(1290,342)">
+        <line x1="0" y1="0" x2="14" y2="-132" stroke="#3D2B1F" stroke-width="10" stroke-linecap="round"/>
+        <ellipse cx="30" cy="-127" rx="42" ry="12" fill="#38941F" transform="rotate(32,30,-127)"/>
+        <ellipse cx="6"  cy="-138" rx="44" ry="11" fill="#2D7A1B" transform="rotate(-9,6,-138)"/>
+        <ellipse cx="32" cy="-130" rx="40" ry="10" fill="#4AAE2A" transform="rotate(57,32,-130)"/>
+        <ellipse cx="-12" cy="-133" rx="37" ry="9" fill="#2D7A1B" transform="rotate(-47,-12,-133)"/>
+        <ellipse cx="16" cy="-142" rx="36" ry="8" fill="#38941F" transform="rotate(4,16,-142)"/>
+      </g>
+      <g id="pr2" transform="translate(1385,362)">
+        <line x1="0" y1="0" x2="-6" y2="-102" stroke="#3D2B1F" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="-17" cy="-100" rx="33" ry="9" fill="#2D7A1B" transform="rotate(-22,-17,-100)"/>
+        <ellipse cx="6"   cy="-108" rx="31" ry="8" fill="#38941F" transform="rotate(14,6,-108)"/>
+        <ellipse cx="-22" cy="-104" rx="29" ry="8" fill="#4AAE2A" transform="rotate(-52,-22,-104)"/>
+      </g>
+
+      <!-- === RED SOIL GROUND === -->
+      <path d="M0,420 L1440,420 L1440,520 L0,520 Z" fill="#7A2E12"/>
+      <path d="M0,428 Q720,418 1440,428 L1440,520 L0,520 Z" fill="#8B3A1A"/>
+
+      <!-- Soil texture lines -->
+      <g opacity=".22" stroke="#5D2510" stroke-width="1.5" fill="none">
+        <path d="M0,438 Q360,432 720,438 Q1080,444 1440,438"/>
+        <path d="M0,450 Q360,444 720,450 Q1080,456 1440,450"/>
+        <path d="M0,462 Q360,456 720,462 Q1080,468 1440,462"/>
+        <path d="M0,474 Q360,468 720,474 Q1080,480 1440,474"/>
+        <path d="M0,487 Q360,481 720,487 Q1080,493 1440,487"/>
+        <path d="M0,500 Q360,494 720,500 Q1080,506 1440,500"/>
+      </g>
+
+      <!-- Cassava plants along front -->
+      <g id="cass" stroke-width="1.6" stroke-linecap="round" fill="none">
+        <g transform="translate(90,435)">
+          <path d="M0,0 L-9,-24 M0,0 L0,-26 M0,0 L9,-24 M0,0 L-5,-18 M0,0 L5,-18" stroke="#5A9A3A"/>
+        </g>
+        <g transform="translate(195,430)">
+          <path d="M0,0 L-8,-22 M0,0 L0,-25 M0,0 L8,-22 M0,0 L-5,-17 M0,0 L5,-17" stroke="#4A7C2F"/>
+        </g>
+        <g transform="translate(315,433)">
+          <path d="M0,0 L-9,-23 M0,0 L1,-26 M0,0 L9,-22 M0,0 L-4,-17 M0,0 L4,-16" stroke="#5A9A3A"/>
+        </g>
+        <g transform="translate(540,431)">
+          <path d="M0,0 L-8,-23 M0,0 L0,-26 M0,0 L8,-23 M0,0 L-5,-18 M0,0 L5,-17" stroke="#4A7C2F"/>
+        </g>
+        <g transform="translate(660,428)">
+          <path d="M0,0 L-10,-25 M0,0 L0,-27 M0,0 L10,-25 M0,0 L-6,-19 M0,0 L6,-19" stroke="#5A9A3A"/>
+        </g>
+        <g transform="translate(840,432)">
+          <path d="M0,0 L-8,-22 M0,0 L1,-24 M0,0 L8,-22 M0,0 L-4,-16 M0,0 L4,-16" stroke="#4A7C2F"/>
+        </g>
+        <g transform="translate(980,429)">
+          <path d="M0,0 L-9,-24 M0,0 L0,-26 M0,0 L9,-24 M0,0 L-5,-18 M0,0 L5,-18" stroke="#5A9A3A"/>
+        </g>
+        <g transform="translate(1120,433)">
+          <path d="M0,0 L-8,-22 M0,0 L0,-24 M0,0 L8,-22 M0,0 L-5,-17 M0,0 L5,-17" stroke="#4A7C2F"/>
+        </g>
+        <g transform="translate(1260,430)">
+          <path d="M0,0 L-9,-23 M0,0 L1,-25 M0,0 L8,-23 M0,0 L-5,-17 M0,0 L4,-17" stroke="#5A9A3A"/>
+        </g>
+        <g transform="translate(1400,435)">
+          <path d="M0,0 L-8,-21 M0,0 L0,-23 M0,0 L8,-21 M0,0 L-4,-16 M0,0 L4,-16" stroke="#4A7C2F"/>
+        </g>
+      </g>
+
+      <!-- Birds SVG layer -->
+      <g id="birds-g"></g>
+    </svg>
+
+    <div id="ptcls"></div>
+  </div><!-- /bg -->
+
+
+  <!-- ════════════ SCROLL CONTENT ════════════ -->
+  <div id="scroll-wrap">
+
+    <!-- ── HERO ── -->
+    <section id="s-hero">
+      <p class="hero-eyebrow" id="h-eye">Grown from the red earth · Nigeria</p>
+      <h1 class="hero-title" id="h-ttl"><em>Naija</em><br>Roots<br>Farm</h1>
+      <p class="hero-sub" id="h-sub">Where the laterite soil gives life.<br>Where every harvest is a celebration.</p>
+      <div class="scroll-hint" id="sh">
+        <div class="sh-line"></div>
+        <span>Scroll to explore</span>
+      </div>
+    </section>
+
+    <div style="height:80vh;"></div>
+
+    <!-- ── ABOUT ── -->
+    <section class="sec" id="s-about">
+      <div class="card" id="c-about">
+        <p class="sec-label">Our Roots</p>
+        <h2 class="sec-title">Born from<br><em>Nigerian Soil</em></h2>
+        <div class="divider"></div>
+        <p class="sec-body">For generations, our family has worked the deep red laterite earth of West Africa. From the lush river valleys of the Niger Delta to the sun-baked plains of the North, we farm with reverence — honoring the Yoruba, Igbo, and Hausa traditions that have fed this great nation for centuries.<br><br>We believe the land is not just resource, it is heritage. And every harvest we bring in, we bring it in with pride.</p>
+        <div class="stats-row">
+          <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Hectares farmed</div></div>
+          <div class="stat-item"><div class="stat-num">3rd</div><div class="stat-label">Generation farm</div></div>
+          <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Crop varieties</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:80vh;"></div>
+
+    <!-- ── PRODUCTS ── -->
+    <section class="sec" id="s-products">
+      <div class="card card-wide" id="c-prod">
+        <p class="sec-label">What We Grow</p>
+        <h2 class="sec-title" style="text-align:center;">The Harvest<br><em>of Our Land</em></h2>
+        <div class="divider"></div>
+        <p class="sec-body" style="text-align:center;">Nigeria's most cherished crops — grown the way our ancestors taught us, with patience, respect, and love for the soil.</p>
+        <div class="prod-grid">
+          <div class="prod-item"><div class="prod-icon">🌿</div><div class="prod-name">Cassava</div><div class="prod-desc">Fresh roots for garri, fufu & starch</div></div>
+          <div class="prod-item"><div class="prod-icon">🍠</div><div class="prod-name">Yam</div><div class="prod-desc">New yam festival grade. The king of crops.</div></div>
+          <div class="prod-item"><div class="prod-icon">🌴</div><div class="prod-name">Palm Oil</div><div class="prod-desc">Unrefined red palm oil, cold pressed</div></div>
+          <div class="prod-item"><div class="prod-icon">🌽</div><div class="prod-name">Maize</div><div class="prod-desc">Sweet corn for roasting & milling</div></div>
+          <div class="prod-item"><div class="prod-icon">🍌</div><div class="prod-name">Plantain</div><div class="prod-desc">Ripe & unripe — for boli and dodo</div></div>
+          <div class="prod-item"><div class="prod-icon">🥬</div><div class="prod-name">Vegetables</div><div class="prod-desc">Ugwu, bitter leaf, garden egg</div></div>
+          <div class="prod-item"><div class="prod-icon">🫘</div><div class="prod-name">Cowpea</div><div class="prod-desc">Honey beans & black-eyed peas</div></div>
+          <div class="prod-item"><div class="prod-icon">🍋</div><div class="prod-name">Citrus</div><div class="prod-desc">Orange, lime & tangerine groves</div></div>
+        </div>
+      </div>
+    </section>
+
+    <div style="height:80vh;"></div>
+
+    <!-- ── CONTACT ── -->
+    <section class="sec" id="s-contact">
+      <div class="card contact-card" id="c-contact">
+        <p class="sec-label">Get In Touch</p>
+        <h2 class="sec-title">Ready to Order<br><em>Fresh from the Farm?</em></h2>
+        <div class="divider"></div>
+        <p class="sec-body">Whether you're a wholesaler, a restaurant owner, or just someone who values real Nigerian produce — we deliver across the country with freshness guaranteed.<br>Let's build something together.</p>
+        <a href="mailto:hello@naijrootsfarm.com" class="contact-btn" id="ctabtn"><span>Contact Us Today</span></a>
+        <p class="locations">📍 Lagos &nbsp;·&nbsp; Abuja &nbsp;·&nbsp; Ibadan &nbsp;·&nbsp; Port Harcourt &nbsp;·&nbsp; Enugu</p>
+      </div>
+    </section>
+
+    <div style="height:20vh;"></div>
+
+    <footer id="footer">
+      <div class="footer-logo">NAIJA ROOTS FARM</div>
+      <p class="footer-copy">© 2026 Naija Roots Farm. All rights reserved.</p>
+    </footer>
+
+  </div><!-- /scroll-wrap -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    /* ══ CURSOR ══════════════════════════════════════════ */
+    const curEl = document.getElementById('cur');
+    const ringEl = document.getElementById('cur-ring');
+    let mx=0,my=0,rx=0,ry=0;
+    document.addEventListener('mousemove',e=>{
+      mx=e.clientX; my=e.clientY;
+      gsap.to(curEl,{x:mx,y:my,duration:.04,ease:'none'});
+    });
+    (function animRing(){
+      rx+=(mx-rx)*.09; ry+=(my-ry)*.09;
+      gsap.set(ringEl,{x:rx,y:ry});
+      requestAnimationFrame(animRing);
+    })();
+    document.querySelectorAll('a,button,.prod-item').forEach(el=>{
+      el.addEventListener('mouseenter',()=>gsap.to([curEl,ringEl],{scale:2.2,duration:.3,ease:'back.out(2)'}));
+      el.addEventListener('mouseleave',()=>gsap.to([curEl,ringEl],{scale:1,duration:.3}));
+    });
+
+    /* ══ STARS ══════════════════════════════════════════ */
+    const starsWrap = document.getElementById('stars-wrap');
+    const starEls = [];
+    for(let i=0;i<160;i++){
+      const s=document.createElement('div');
+      s.className='star';
+      const sz=Math.random()*2+1;
+      s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*70}%;opacity:0;`;
+      starsWrap.appendChild(s);
+      starEls.push({el:s,base:Math.random()*.8+.2});
+    }
+
+    /* ══ PARTICLES ══════════════════════════════════════ */
+    const ptclWrap=document.getElementById('ptcls');
+    for(let i=0;i<50;i++){
+      const p=document.createElement('div');
+      p.className='ptcl';
+      const sz=Math.random()*4+2;
+      const hue=Math.floor(Math.random()*40+20);
+      p.style.cssText=`width:${sz}px;height:${sz}px;background:hsla(${hue},80%,70%,.4);left:${Math.random()*100}%;bottom:${Math.random()*45+5}%;`;
+      ptclWrap.appendChild(p);
+      gsap.to(p,{
+        y:-(Math.random()*220+80),
+        x:(Math.random()-.5)*120,
+        opacity:0,
+        duration:Math.random()*7+5,
+        delay:Math.random()*10,
+        repeat:-1,
+        ease:'power1.out',
+        repeatDelay:Math.random()*4+1
+      });
+    }
+
+    /* ══ CLOUDS ═════════════════════════════════════════ */
+    const cloudsWrap=document.getElementById('clouds-wrap');
+    for(let i=0;i<5;i++){
+      const c=document.createElement('div');
+      c.className='cld';
+      const w=Math.random()*180+80;
+      const h=Math.random()*28+12;
+      c.style.cssText=`width:${w}px;height:${h}px;background:rgba(255,255,255,${Math.random()*.35+.45});top:${Math.random()*28+4}%;left:${Math.random()*110-10}%;`;
+      cloudsWrap.appendChild(c);
+      const dur=Math.random()*65+40;
+      gsap.to(c,{
+        x: window.innerWidth+400,
+        duration:dur,
+        repeat:-1,
+        ease:'none',
+        delay:-Math.random()*dur
+      });
+    }
+
+    /* ══ BIRDS (SVG path birds) ═════════════════════════ */
+    const birdsG=document.getElementById('birds-g');
+    let birdsCreated=false;
+    function makeBird(sx,sy,sc){
+      const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d','M0,0 Q6,-10 12,0 Q18,-10 24,0');
+      p.setAttribute('fill','none');
+      p.setAttribute('stroke','rgba(20,20,20,0.35)');
+      p.setAttribute('stroke-width','1.8');
+      p.setAttribute('stroke-linecap','round');
+      g.appendChild(p);
+      g.setAttribute('transform',`translate(${sx},${sy}) scale(${sc})`);
+      birdsG.appendChild(g);
+      const destX=sx+window.innerWidth+300;
+      gsap.to(g,{
+        attr:{transform:`translate(${destX},${sy-60}) scale(${sc})`},
+        duration:Math.random()*18+12,
+        delay:Math.random()*6,
+        ease:'none',
+        onComplete:()=>{ birdsG.removeChild(g); }
+      });
+      gsap.to(p,{
+        attr:{d:'M0,0 Q6,-15 12,0 Q18,-15 24,0'},
+        duration:.35,yoyo:true,repeat:-1,ease:'power1.inOut'
+      });
+    }
+
+    /* ══ HERO ENTRANCE ══════════════════════════════════ */
+    gsap.set(['#h-eye','#h-ttl','#h-sub','#sh'],{opacity:0,y:32});
+    const heroTl=gsap.timeline({delay:.4});
+    heroTl
+      .to('#h-eye',{opacity:1,y:0,duration:1.2,ease:'power3.out'})
+      .to('#h-ttl',{opacity:1,y:0,duration:1.6,ease:'power3.out'},'-=.7')
+      .to('#h-sub',{opacity:1,y:0,duration:1.2,ease:'power3.out'},'-=.8')
+      .to('#sh',   {opacity:1,y:0,duration:1,  ease:'power3.out'},'-=.5');
+
+    /* Fade scroll hint on first scroll */
+    gsap.to('#sh',{opacity:0,scrollTrigger:{trigger:'body',start:'120px top',end:'200px top',scrub:true}});
+
+    /* ══ CARD REVEALS ═══════════════════════════════════ */
+    ['c-about','c-prod','c-contact'].forEach(id=>{
+      gsap.fromTo(`#${id}`,
+        {opacity:0,y:70},
+        {opacity:1,y:0,duration:1.3,ease:'power3.out',
+          scrollTrigger:{trigger:`#${id}`,start:'top 78%',toggleActions:'play none none reverse'}
+        }
+      );
+    });
+
+    /* ══ HERO PARALLAX EXIT ══════════════════════════════ */
+    gsap.to('#s-hero',{
+      y:-120,ease:'none',
+      scrollTrigger:{trigger:'#s-hero',start:'top top',end:'bottom top',scrub:true}
+    });
+
+    /* ══ CONTACT BTN PULSE ══════════════════════════════ */
+    gsap.to('#ctabtn',{
+      boxShadow:'0 0 32px rgba(255,215,0,.45)',
+      repeat:-1,yoyo:true,duration:2,ease:'power1.inOut'
+    });
+
+    /* ══ MAIN SCROLL-DRIVEN BACKGROUND ══════════════════
+       Maps scroll progress 0→1 across the page to:
+       0.00 → Dawn    (orange sunrise)
+       0.25 → Morning (golden light)
+       0.50 → Day     (bright blue)
+       0.75 → Dusk    (red sunset)
+       1.00 → Night   (stars, moon)
+    ════════════════════════════════════════════════════ */
+    const skyEl  = document.getElementById('sky');
+    const sunEl  = document.getElementById('sun');
+    const moonEl = document.getElementById('moon');
+
+    const skyGrads=[
+      'linear-gradient(to bottom,#B83A10 0%,#E86B28 22%,#FFB347 55%,#FFD194 78%,#8B3A1A 100%)',
+      'linear-gradient(to bottom,#FF9933 0%,#FFB347 30%,#FFD98A 62%,#A8C842 88%,#5A8A2A 100%)',
+      'linear-gradient(to bottom,#1565C0 0%,#42A5F5 28%,#90CAF9 58%,#B3E5FC 78%,#3D7A1A 100%)',
+      'linear-gradient(to bottom,#C62828 0%,#EF5350 18%,#FF8A65 42%,#FFAB40 65%,#8B3A1A 100%)',
+      'linear-gradient(to bottom,#040818 0%,#0D1B3E 28%,#1A1A3E 58%,#2A0E0A 100%)',
+    ];
+
+    ScrollTrigger.create({
+      trigger:'#scroll-wrap',
+      start:'top top',
+      end:'bottom bottom',
+      scrub:.6,
+      onUpdate(self){
+        const p=self.progress;
+
+        /* Sky gradient */
+        const idx=p<.25?0:p<.5?1:p<.75?2:p<.9?3:4;
+        skyEl.style.background=skyGrads[idx];
+
+        /* Sun arc: rises left-bottom → peaks center-top → sets right-bottom */
+        const sunP=Math.min(p/.85,1);
+        const vw=window.innerWidth;
+        const vh=window.innerHeight;
+        const sunX=sunP*vw*1.0;
+        const sunArc=Math.sin(sunP*Math.PI)*vh*.68;
+        const sunY=vh*.88 - sunArc;
+        const sunOpacity=p>.82?Math.max(0,1-(p-.82)/.1):1;
+        const sunSize=55+Math.sin(sunP*Math.PI)*35;
+
+        sunEl.style.left=sunX+'px';
+        sunEl.style.top=sunY+'px';
+        sunEl.style.opacity=sunOpacity;
+        sunEl.style.width=sunSize+'px';
+        sunEl.style.height=sunSize+'px';
+
+        /* Sun color by time */
+        if(p<.18){
+          sunEl.style.background='radial-gradient(circle,#FFF9C4 15%,#FFD700 45%,#FF6B35 80%)';
+          sunEl.style.boxShadow='0 0 40px 15px rgba(255,107,53,.55)';
+        } else if(p<.55){
+          sunEl.style.background='radial-gradient(circle,#FFFFFF 10%,#FFF9C4 40%,#FFE082 80%)';
+          sunEl.style.boxShadow='0 0 70px 28px rgba(255,240,150,.4)';
+        } else if(p<.75){
+          sunEl.style.background='radial-gradient(circle,#FFF9C4 15%,#FFD700 45%,#FF8C00 80%)';
+          sunEl.style.boxShadow='0 0 90px 35px rgba(255,140,0,.5)';
+        } else {
+          sunEl.style.background='radial-gradient(circle,#FF6B35 15%,#EF5350 45%,#B71C1C 80%)';
+          sunEl.style.boxShadow='0 0 55px 22px rgba(255,80,0,.65)';
+        }
+
+        /* Moon rises after sunset */
+        const moonOpacity=p>.88?(p-.88)/.12:0;
+        moonEl.style.opacity=Math.min(moonOpacity,1);
+
+        /* Stars twinkle in at night */
+        const starVisibility=p>.88?(p-.88)/.12:0;
+        starEls.forEach(({el,base})=>{
+          el.style.opacity=starVisibility*base;
+        });
+
+        /* Landscape brightness — dim at night */
+        const bright=p>.88?Math.max(.22,1-(p-.88)*4.5):1;
+        document.getElementById('landscape').style.filter=`brightness(${bright})`;
+
+        /* Hide/show clouds at night */
+        document.getElementById('clouds-wrap').style.opacity=p>.82?Math.max(0,1-(p-.82)/.1):1;
+
+        /* Birds: spawn during daytime scroll window */
+        if(p>.12 && p<.78 && !birdsCreated && Math.random()<.015){
+          makeBird(-80,Math.random()*vh*.35+30,Math.random()*.5+.65);
+        }
+      }
+    });
+
+  </script>
+</body>
+</html>
